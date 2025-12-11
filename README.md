@@ -1,0 +1,2 @@
+尝试将freertos移植到RISC-V的S/U模式执行，然后用opensbi启动
+为后面在hypervisor上运行freertos打基础
