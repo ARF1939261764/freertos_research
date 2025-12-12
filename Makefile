@@ -1,4 +1,6 @@
-TESTNAME = freertos_demo
+.PHONY : build
+
+TESTNAME = freertos
 
 # 可执行文件名
 TARGET = main

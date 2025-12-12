@@ -52,17 +52,17 @@ _clean_bss_end:
 //*****************************
 //pmp
 //*****************************
-  li a0, 0x1FFFFFFF
-  csrw pmpaddr0, a0
-  li a0, 0x1f
-  csrw pmpcfg0, a0
+  # li a0, 0x1FFFFFFF
+  # csrw pmpaddr0, a0
+  # li a0, 0x1f
+  # csrw pmpcfg0, a0
 //*****************************
 //expection_handler
 //*****************************
   la t0,expection_handler
   or t0,t0,0x01
-  csrw mtvec, t0
-  csrw stvec, t0
+  # csrw mtvec, t0
+  # csrw stvec, t0
 //*****************************
 //stack
 //*****************************

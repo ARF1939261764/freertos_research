@@ -8,6 +8,8 @@
 
 BaseType_t xPortStartScheduler( void )
 {
+    extern void xPortStartFirstTask_asm(void);
+    xPortStartFirstTask_asm();
     return pdTRUE;
 }
 
@@ -19,11 +21,12 @@ StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
                                      TaskFunction_t pxCode,
                                      void * pvParameters )
 {
-    ( void ) pxTopOfStack;
-    ( void ) pvParameters;
-    ( void ) * pxCode;
-
-    return NULL;
+    StackType_t *StackType;
+    extern StackType_t * pxPortInitialiseStack_asm( StackType_t * pxTopOfStack,
+                                     TaskFunction_t pxCode,
+                                     void * pvParameters );
+    StackType = pxPortInitialiseStack_asm(pxTopOfStack,pxCode,pvParameters);
+    return StackType;
 }
 
 void vPortYield( void )

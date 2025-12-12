@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name":"qemu",
+            "name":"freertos_demo",
             "type":"cppdbg",
             "request": "launch",
             "miDebuggerServerAddress": "127.0.0.1:1234",
@@ -18,6 +18,24 @@
             },
             "MIMode": "gdb",
             "preLaunchTask": "make_debug"
+        },
+        {
+            "name":"freertos",
+            "type":"cppdbg",
+            "request": "launch",
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "miDebuggerPath": "/home/tangf/04_softs/riscv-tools/bin/riscv64-unknown-elf-gdb",
+            "program": "${workspaceRoot}/build/freertos/main.elf",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "logging": {
+                "engineLogging":false
+            },
+            "MIMode": "gdb",
+            //"preLaunchTask": "make_debug"
         }
     ]
 }
