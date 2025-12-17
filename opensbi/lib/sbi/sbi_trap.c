@@ -323,6 +323,11 @@ struct sbi_trap_context *sbi_trap_handler(struct sbi_trap_context *tcntx)
 		msg = "unhandled local interrupt";
 		goto trap_done;
 	}
+	
+	// sbi_printf("mcause = %08lx\r\n",mcause);
+	// sbi_printf("mepc = %08lx\r\n",regs->mepc);
+	// sbi_printf("mtval = %08lx\r\n",tcntx->trap.tval);
+	// sbi_printf("mstatus = %08lx\r\n",csr_read(mstatus));
 
 	switch (mcause) {
 	case CAUSE_ILLEGAL_INSTRUCTION:
@@ -368,10 +373,13 @@ struct sbi_trap_context *sbi_trap_handler(struct sbi_trap_context *tcntx)
 trap_done:
 	if (rc)
 		sbi_trap_error(msg, rc, tcntx);
-
+	
+	// sbi_printf("tangf,1\r\n");
 	if (sbi_mstatus_prev_mode(regs->mstatus) != PRV_M)
 		sbi_sse_process_pending_events(regs);
 
 	sbi_trap_set_context(scratch, tcntx->prev_context);
+	
+	// sbi_printf("tangf,2\r\n");
 	return tcntx;
 }

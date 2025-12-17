@@ -13,6 +13,7 @@
 #include <sbi/sbi_ecall_interface.h>
 #include <sbi/sbi_trap.h>
 #include <sbi/sbi_timer.h>
+#include <sbi/sbi_console.h>
 
 static int sbi_ecall_time_handler(unsigned long extid, unsigned long funcid,
 				  struct sbi_trap_regs *regs,
@@ -24,6 +25,7 @@ static int sbi_ecall_time_handler(unsigned long extid, unsigned long funcid,
 #if __riscv_xlen == 32
 		sbi_timer_event_start((((u64)regs->a1 << 32) | (u64)regs->a0));
 #else
+		// sbi_printf("tangf:sbi_ecall_time_handler,a0=%08lx\r\n",(u64)regs->a0);
 		sbi_timer_event_start((u64)regs->a0);
 #endif
 	} else

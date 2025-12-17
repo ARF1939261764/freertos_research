@@ -128,6 +128,7 @@ int sbi_ecall_handler(struct sbi_trap_context *tcntx)
 	bool is_0_1_spec = 0;
 
 	ext = sbi_ecall_find_extension(extension_id);
+	// sbi_printf("ext = %s,%p\r\n",ext->name,ext);
 	if (ext && ext->handle) {
 		ret = ext->handle(extension_id, func_id, regs, &out);
 		if (extension_id >= SBI_EXT_0_1_SET_TIMER &&

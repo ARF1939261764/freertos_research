@@ -5,13 +5,22 @@
 #include "queue.h" /* RTOS queue related API prototypes. */
 #include "timers.h" /* Software timer related API prototypes. */
 #include "semphr.h" /* Semaphore related API prototypes. */
+#include <stddef.h>
 #include <sys/cdefs.h>
+#include "csr.h"
+// SBI扩展ID（ASCII码 "TIME"）
+#define SBI_EXT_TIMER          0x54494D45
+// TIMER扩展功能ID
+#define SBI_TIMER_SET_TIMER    0
+#define SBI_TIMER_CLEAR_IPI    1
+#define SBI_TIMER_SEND_IPI     2
 
 struct sbiret 
 {
 	long error;
 	long value;
 };
+
 
 volatile int a = 5;
 volatile int b;
@@ -43,12 +52,32 @@ struct sbiret sbi_ecall(int ext, int fid, unsigned long arg0,
 		      : "+r" (a0), "+r" (a1)
 		      : "r" (a2), "r" (a3), "r" (a4), "r" (a5), "r" (a6), "r" (a7)
 		      : "memory");
-		      
+        
 	ret.error = a0;
 	ret.value = a1;
 
 	return ret;
 }
+
+void sbi_print(char *str){
+    do{
+        sbi_ecall(1,0,*str,0,0,0,0,0);
+    }while(*str++);
+}
+
+
+struct sbiret sbi_timer_set(uint64_t timeout) {
+    struct sbiret ret = sbi_ecall(SBI_EXT_TIMER, SBI_TIMER_SET_TIMER, timeout, 0, 0,0,0,0);
+    return ret;
+}
+
+void irq_mtimer_handler(void){
+    size_t t;
+    printf("irq_mtimer_handler...,time = %016d\n",read_csr(time));
+    t = 100000+read_csr(time);
+    sbi_timer_set( t);
+}
+
 
 void task_0_main( void * arg ){
     int i=0;
@@ -58,26 +87,23 @@ void task_0_main( void * arg ){
     }
 }
 
-void sbi_print(char *str){
-    do{
-        sbi_ecall(1,0,*str,0,0,0,0,0);
-    }while(*str++);
-}
+
 
 void task_1_main( void * arg ){
     int i=0;
     printf("enter task_1_main...\n");
     sbi_print("hello opensbi!\n");
-    asm volatile("ecall");
+    sbi_timer_set(1000000);
     while(1){
         // printf("task_1_main:%d\n",i++);
     }
 }
 
 int freertos_main(void){
-    xTaskCreate(task_0_main,"task_0_main",512,NULL,4,&task_0_main_handler);
-    xTaskCreate(task_1_main,"task_1_main",512,NULL,4,&task_1_main_handler);
-    vTaskStartScheduler();
+    // xTaskCreate(task_0_main,"task_0_main",512,NULL,4,&task_0_main_handler);
+    // xTaskCreate(task_1_main,"task_1_main",512,NULL,4,&task_1_main_handler);
+    // vTaskStartScheduler();
+    task_1_main(NULL);
     return 0;
 }
 

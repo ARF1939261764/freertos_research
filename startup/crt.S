@@ -49,6 +49,12 @@ _clean_bss_start:
   j _clean_bss_start
 _clean_bss_end:
 
+
+//*****************************
+//stack
+//*****************************
+  la sp,__C_STACK_TOP__
+
 //*****************************
 //pmp
 //*****************************
@@ -59,14 +65,23 @@ _clean_bss_end:
 //*****************************
 //expection_handler
 //*****************************
+
   la t0,expection_handler
   or t0,t0,0x01
-  # csrw mtvec, t0
-  # csrw stvec, t0
-//*****************************
-//stack
-//*****************************
-  la sp,__C_STACK_TOP__
+  csrw stvec, t0
+
+    //satstus
+  csrr t0, sstatus
+  ori t0, t0, 0x2
+  csrw sstatus,t0
+
+  //sip
+  csrw sip,x0
+    //sie
+  csrr t0, sie
+  ori t0, t0, 1 << 5
+  csrw sie,t0
+
 
 //*****************************
 //go to system_initial
@@ -93,7 +108,7 @@ expection_handler:
   .word 0xdeaddead                               //2
   .word 0xdeaddead                               //3
   .word 0xdeaddead                               //4
-  .word 0xdeaddead                               //5
+  j     freertos_risc_v_stimer_interrupt_handler //5
   .word 0xdeaddead                               //6
   j     freertos_risc_v_mtimer_interrupt_handler //7
   .word 0xdeaddead                               //8

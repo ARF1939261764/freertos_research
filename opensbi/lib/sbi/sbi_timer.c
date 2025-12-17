@@ -139,12 +139,15 @@ void sbi_timer_event_start(u64 next_event)
 	 * the older software to leverage sstc extension on newer hardware.
 	 */
 	if (sbi_hart_has_extension(sbi_scratch_thishart_ptr(), SBI_HART_EXT_SSTC)) {
+		// sbi_printf("tangf,write_csr=%08lx\r\n",next_event);
 		csr_write64(CSR_STIMECMP, next_event);
+		// sbi_printf("tangf,write_csr=%08lx\r\n",next_event);
 	} else if (timer_dev && timer_dev->timer_event_start) {
 		timer_dev->timer_event_start(next_event);
 		csr_clear(CSR_MIP, MIP_STIP);
 	}
 	csr_set(CSR_MIE, MIP_MTIP);
+		// sbi_printf("tangf,write_csr=%08lx\r\n",next_event);
 }
 
 void sbi_timer_process(void)

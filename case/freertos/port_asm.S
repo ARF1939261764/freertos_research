@@ -4,6 +4,7 @@
 .global pxPortInitialiseStack_asm
 .global xPortStartFirstTask_asm
 .global freertos_risc_v_mtimer_interrupt_handler
+.global freertos_risc_v_stimer_interrupt_handler
 .global freertos_risc_v_exception_handler
 
 /*
@@ -94,6 +95,73 @@ xPortStartFirstTask_asm:
     ret
     
 freertos_risc_v_mtimer_interrupt_handler:
+    j .
 
 freertos_risc_v_exception_handler:
+    j .
   
+freertos_risc_v_stimer_interrupt_handler:
+    addi sp,sp,-8*32
+    store_x x0,0* portWORD_SIZE(sp)
+    store_x x1,1* portWORD_SIZE(sp)
+    store_x x4,4* portWORD_SIZE(sp)
+    store_x x5,5* portWORD_SIZE(sp)
+    store_x x6,6* portWORD_SIZE(sp)
+    store_x x7,7* portWORD_SIZE(sp)
+    store_x x8,8* portWORD_SIZE(sp)
+    store_x x9,9* portWORD_SIZE(sp)
+    store_x x10,10* portWORD_SIZE(sp)
+    store_x x11,11* portWORD_SIZE(sp)
+    store_x x12,12* portWORD_SIZE(sp)
+    store_x x13,13* portWORD_SIZE(sp)
+    store_x x14,14* portWORD_SIZE(sp)
+    store_x x15,15* portWORD_SIZE(sp)
+    store_x x16,16* portWORD_SIZE(sp)
+    store_x x17,17* portWORD_SIZE(sp)
+    store_x x18,18* portWORD_SIZE(sp)
+    store_x x19,19* portWORD_SIZE(sp)
+    store_x x20,20* portWORD_SIZE(sp)
+    store_x x21,21* portWORD_SIZE(sp)
+    store_x x22,22* portWORD_SIZE(sp)
+    store_x x23,23* portWORD_SIZE(sp)
+    store_x x24,24* portWORD_SIZE(sp)
+    store_x x25,25* portWORD_SIZE(sp)
+    store_x x26,26* portWORD_SIZE(sp)
+    store_x x27,27* portWORD_SIZE(sp)
+    store_x x28,28* portWORD_SIZE(sp)
+    store_x x29,29* portWORD_SIZE(sp)
+    store_x x30,30* portWORD_SIZE(sp)
+    store_x x31,31* portWORD_SIZE(sp)
+    call irq_mtimer_handler
+    load_x x0,0* portWORD_SIZE(sp)
+    load_x x1,1* portWORD_SIZE(sp)
+    load_x x4,4* portWORD_SIZE(sp)
+    load_x x5,5* portWORD_SIZE(sp)
+    load_x x6,6* portWORD_SIZE(sp)
+    load_x x7,7* portWORD_SIZE(sp)
+    load_x x8,8* portWORD_SIZE(sp)
+    load_x x9,9* portWORD_SIZE(sp)
+    load_x x10,10* portWORD_SIZE(sp)
+    load_x x11,11* portWORD_SIZE(sp)
+    load_x x12,12* portWORD_SIZE(sp)
+    load_x x13,13* portWORD_SIZE(sp)
+    load_x x14,14* portWORD_SIZE(sp)
+    load_x x15,15* portWORD_SIZE(sp)
+    load_x x16,16* portWORD_SIZE(sp)
+    load_x x17,17* portWORD_SIZE(sp)
+    load_x x18,18* portWORD_SIZE(sp)
+    load_x x19,19* portWORD_SIZE(sp)
+    load_x x20,20* portWORD_SIZE(sp)
+    load_x x21,21* portWORD_SIZE(sp)
+    load_x x22,22* portWORD_SIZE(sp)
+    load_x x23,23* portWORD_SIZE(sp)
+    load_x x24,24* portWORD_SIZE(sp)
+    load_x x25,25* portWORD_SIZE(sp)
+    load_x x26,26* portWORD_SIZE(sp)
+    load_x x27,27* portWORD_SIZE(sp)
+    load_x x28,28* portWORD_SIZE(sp)
+    load_x x29,29* portWORD_SIZE(sp)
+    load_x x30,30* portWORD_SIZE(sp)
+    load_x x31,31* portWORD_SIZE(sp)
+    addi sp,sp,+8*32
+    sret
