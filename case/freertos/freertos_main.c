@@ -100,10 +100,10 @@ void task_1_main( void * arg ){
 }
 
 int freertos_main(void){
-    // xTaskCreate(task_0_main,"task_0_main",512,NULL,4,&task_0_main_handler);
-    // xTaskCreate(task_1_main,"task_1_main",512,NULL,4,&task_1_main_handler);
-    // vTaskStartScheduler();
-    task_1_main(NULL);
+    xTaskCreate(task_0_main,"task_0_main",512,NULL,4,&task_0_main_handler);
+    xTaskCreate(task_1_main,"task_1_main",512,NULL,4,&task_1_main_handler);
+    vTaskStartScheduler();
+    // task_1_main(NULL);
     return 0;
 }
 
