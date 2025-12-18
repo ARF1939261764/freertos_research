@@ -45,11 +45,6 @@
     load_x t0, pxCurrentTCB /* Load pxCurrentTCB. */
     load_x sp, 0 ( t0 )     /* Read sp from first TCB member. */
 
-    load_x t0,portSTACK_PXCODE_IDX * portWORD_SIZE(sp)
-    csrw sepc,t0
-
-    load_x t0, portSTACK_SSTATUS_IDX * portWORD_SIZE( sp )
-    csrw sstatus, t0  
 
     load_x  x1,  portSTACK_X1_IDX * portWORD_SIZE(sp)
     load_x  x5,  portSTACK_X5_IDX * portWORD_SIZE(sp)
@@ -79,6 +74,13 @@
     load_x x29, portSTACK_X29_IDX * portWORD_SIZE(sp)
     load_x x30, portSTACK_X30_IDX * portWORD_SIZE(sp)
     load_x x31, portSTACK_X31_IDX * portWORD_SIZE(sp)
+
+
+    load_x t0,portSTACK_PXCODE_IDX * portWORD_SIZE(sp)
+    csrw sepc,t0
+
+    load_x t0, portSTACK_SSTATUS_IDX * portWORD_SIZE( sp )
+    csrw sstatus, t0  
 
     addi sp, sp, portSTACK_FRAME_SIZE
 

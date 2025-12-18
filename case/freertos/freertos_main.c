@@ -73,7 +73,7 @@ struct sbiret sbi_timer_set(uint64_t timeout) {
 
 void irq_stimer_handler(void){
     size_t t;
-    t = 100000+read_csr(time);
+    t = 10000000+read_csr(time);
     sbi_timer_set( t);
 }
 
@@ -83,6 +83,7 @@ void task_0_main( void * arg ){
     printf("enter task_0_main...\n");
     while(1){
         printf("task_0_main:%d\n",i++);
+        vTaskDelay(1);
     }
 }
 
@@ -93,6 +94,7 @@ void task_1_main( void * arg ){
     printf("enter task_1_main...\n");
     while(1){
         printf("task_1_main:%d\n",i++);
+        vTaskDelay(1);
     }
 }
 

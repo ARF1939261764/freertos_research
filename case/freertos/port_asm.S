@@ -44,8 +44,8 @@ pxPortInitialiseStack_asm:
     addi a0,a0,-portSTACK_FRAME_SIZE
     //satstus
     csrr t0, sstatus                    /* Obtain current mstatus value. */
-    andi t0, t0, ~0x2                   /* Ensure interrupts are disabled when the stack is restored within an ISR.  Required when a task is created after the schedulre has been started, otherwise interrupts would be disabled anyway. */
-    addi t1, x0, 0x20                   /* Generate the value 0x22, which are the SPIE and SIE bits to set in sstatus. */
+    andi t0, t0, ~0x102                   /* Ensure interrupts are disabled when the stack is restored within an ISR.  Required when a task is created after the schedulre has been started, otherwise interrupts would be disabled anyway. */
+    addi t1, x0, 0x120                   /* Generate the value 0x22, which are the SPIE and SIE bits to set in sstatus. */
     or t0, t0, t1                       /* Set SPIE and SPP bits in sstatus value. */
     //save context
     store_x t0,portSTACK_SSTATUS_IDX                 * portWORD_SIZE(a0)//sstatus
@@ -57,21 +57,7 @@ pxPortInitialiseStack_asm:
     ret
 
 xPortStartFirstTask_asm:
-    load_x  sp, pxCurrentTCB  /* Load pxCurrentTCB. */
-    load_x  sp, 0( sp )       /* Read sp from first TCB member. */
-
-    load_x  a0 , portSTACK_PVPARAMETERS_IDX            * portWORD_SIZE( sp )
-
-
-    load_x  t0 , portSTACK_SSTATUS_IDX                 * portWORD_SIZE( sp )
-    csrrw   x0 , sstatus,t0
-
-
-    load_x  t0 , portSTACK_PXCODE_IDX                  * portWORD_SIZE( sp )
-    csrw    sepc,t0
-
-    addi    sp , sp, portSTACK_FRAME_SIZE
-
+    portcontext_RESTORE_CONTEXT
     sret//ret to U mode
     
 freertos_risc_v_mtimer_interrupt_handler:

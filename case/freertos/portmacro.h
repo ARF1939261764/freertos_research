@@ -102,7 +102,7 @@ typedef unsigned char    UBaseType_t;
 #endif /* if ( configNUMBER_OF_CORES == 1 ) */
 
 extern void vPortYield( void );
-#define portYIELD()                                           vPortYield()
+#define portYIELD()                                           __asm volatile ( "ecall" )
 
 /* Task function macros as described on the FreeRTOS.org WEB site. */
 #define portTASK_FUNCTION_PROTO( vFunction, pvParameters )    void vFunction( void * pvParameters )
