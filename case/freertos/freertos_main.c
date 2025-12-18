@@ -73,7 +73,7 @@ struct sbiret sbi_timer_set(uint64_t timeout) {
 
 void irq_stimer_handler(void){
     size_t t;
-    t = 10000000+read_csr(time);
+    t = 100000+read_csr(time);
     sbi_timer_set( t);
 }
 
@@ -83,7 +83,7 @@ void task_0_main( void * arg ){
     printf("enter task_0_main...\n");
     while(1){
         printf("task_0_main:%d\n",i++);
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 }
 
@@ -94,14 +94,14 @@ void task_1_main( void * arg ){
     printf("enter task_1_main...\n");
     while(1){
         printf("task_1_main:%d\n",i++);
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 }
 
 int freertos_main(void){
     sbi_print("hello opensbi!\n");
-    xTaskCreate(task_1_main,"task_1_main",1024,NULL,4,&task_1_main_handler);
-    xTaskCreate(task_0_main,"task_0_main",1024,NULL,4,&task_0_main_handler);
+    xTaskCreate(task_0_main,"task_0_main",2028,NULL,4,&task_0_main_handler);
+    xTaskCreate(task_1_main,"task_1_main",2028,NULL,4,&task_1_main_handler);
     vTaskStartScheduler();
     // task_1_main(NULL);
     return 0;

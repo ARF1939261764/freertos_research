@@ -93,6 +93,7 @@
     csrr a1, sepc
     addi a1, a1, 4          /* Synchronous so update exception return address to the instruction after the instruction that generated the exception. */
     store_x a1,  portSTACK_PXCODE_IDX * portWORD_SIZE(sp)   /* Save updated exception return address. */
+    add t0,x0,sp
     la sp, __freertos_irq_stack_top /* Switch to ISR stack. */
 .endm
 
