@@ -1,5 +1,6 @@
 
 #include "port.h"
+#include "port_asm.h"
 
 .global pxPortInitialiseStack_asm
 .global xPortStartFirstTask_asm
@@ -37,46 +38,14 @@
  * where the global and thread pointers are currently assumed to be constant so
  * are not saved:
  *
- * 31 : reserved
- * 30 : sstatus
- * 29 : xCriticalNesting
- * 28 : x31
- * 27 : x30
- * 26 : x29
- * 25 : x28
- * 24 : x27
- * 23 : x26
- * 22 : x25
- * 21 : x24
- * 20 : x23
- * 19 : x22
- * 18 : x21
- * 17 : x20
- * 16 : x19
- * 15 : x18
- * 14 : x17
- * 13 : x16
- * 12 : x15
- * 11 : x14
- * 10 : x13
- * 09 : x12
- * 08 : x11
- * 07 : pvParameters
- * 06 : x9
- * 05 : x8
- * 04 : x7
- * 03 : x6
- * 02 : x5
- * 01 : portTASK_RETURN_ADDRESS
- * 00 : pxCode
  */
 pxPortInitialiseStack_asm:
     //stack
-    addi a0,a0,portSTACK_FRAME_SIZE - portWORD_SIZE
+    addi a0,a0,-portSTACK_FRAME_SIZE
     //satstus
     csrr t0, sstatus                    /* Obtain current mstatus value. */
     andi t0, t0, ~0x2                   /* Ensure interrupts are disabled when the stack is restored within an ISR.  Required when a task is created after the schedulre has been started, otherwise interrupts would be disabled anyway. */
-    addi t1, x0, 0x122                  /* Generate the value 0x122, which are the SPIE and SPP bits to set in mstatus. */
+    addi t1, x0, 0x20                   /* Generate the value 0x22, which are the SPIE and SIE bits to set in sstatus. */
     or t0, t0, t1                       /* Set SPIE and SPP bits in sstatus value. */
     //save context
     store_x t0,portSTACK_SSTATUS_IDX                 * portWORD_SIZE(a0)//sstatus
@@ -91,77 +60,33 @@ xPortStartFirstTask_asm:
     load_x  sp, pxCurrentTCB  /* Load pxCurrentTCB. */
     load_x  sp, 0( sp )       /* Read sp from first TCB member. */
 
-    load_x  x1, portSTACK_PXCODE_IDX                  * portWORD_SIZE( sp )       /* Note for starting the scheduler the exception return address is used as the function return address. */
-    ret
+    load_x  a0 , portSTACK_PVPARAMETERS_IDX            * portWORD_SIZE( sp )
+
+
+    load_x  t0 , portSTACK_SSTATUS_IDX                 * portWORD_SIZE( sp )
+    csrrw   x0 , sstatus,t0
+
+
+    load_x  t0 , portSTACK_PXCODE_IDX                  * portWORD_SIZE( sp )
+    csrw    sepc,t0
+
+    addi    sp , sp, portSTACK_FRAME_SIZE
+
+    sret//ret to U mode
     
 freertos_risc_v_mtimer_interrupt_handler:
     j .
 
 freertos_risc_v_exception_handler:
-    j .
+    portcontext_SAVE_CONTEXT_EXCEPTION
+    call vTaskSwitchContext
+    portcontext_RESTORE_CONTEXT
   
 freertos_risc_v_stimer_interrupt_handler:
-    addi sp,sp,-8*32
-    store_x x0,0* portWORD_SIZE(sp)
-    store_x x1,1* portWORD_SIZE(sp)
-    store_x x4,4* portWORD_SIZE(sp)
-    store_x x5,5* portWORD_SIZE(sp)
-    store_x x6,6* portWORD_SIZE(sp)
-    store_x x7,7* portWORD_SIZE(sp)
-    store_x x8,8* portWORD_SIZE(sp)
-    store_x x9,9* portWORD_SIZE(sp)
-    store_x x10,10* portWORD_SIZE(sp)
-    store_x x11,11* portWORD_SIZE(sp)
-    store_x x12,12* portWORD_SIZE(sp)
-    store_x x13,13* portWORD_SIZE(sp)
-    store_x x14,14* portWORD_SIZE(sp)
-    store_x x15,15* portWORD_SIZE(sp)
-    store_x x16,16* portWORD_SIZE(sp)
-    store_x x17,17* portWORD_SIZE(sp)
-    store_x x18,18* portWORD_SIZE(sp)
-    store_x x19,19* portWORD_SIZE(sp)
-    store_x x20,20* portWORD_SIZE(sp)
-    store_x x21,21* portWORD_SIZE(sp)
-    store_x x22,22* portWORD_SIZE(sp)
-    store_x x23,23* portWORD_SIZE(sp)
-    store_x x24,24* portWORD_SIZE(sp)
-    store_x x25,25* portWORD_SIZE(sp)
-    store_x x26,26* portWORD_SIZE(sp)
-    store_x x27,27* portWORD_SIZE(sp)
-    store_x x28,28* portWORD_SIZE(sp)
-    store_x x29,29* portWORD_SIZE(sp)
-    store_x x30,30* portWORD_SIZE(sp)
-    store_x x31,31* portWORD_SIZE(sp)
-    call irq_mtimer_handler
-    load_x x0,0* portWORD_SIZE(sp)
-    load_x x1,1* portWORD_SIZE(sp)
-    load_x x4,4* portWORD_SIZE(sp)
-    load_x x5,5* portWORD_SIZE(sp)
-    load_x x6,6* portWORD_SIZE(sp)
-    load_x x7,7* portWORD_SIZE(sp)
-    load_x x8,8* portWORD_SIZE(sp)
-    load_x x9,9* portWORD_SIZE(sp)
-    load_x x10,10* portWORD_SIZE(sp)
-    load_x x11,11* portWORD_SIZE(sp)
-    load_x x12,12* portWORD_SIZE(sp)
-    load_x x13,13* portWORD_SIZE(sp)
-    load_x x14,14* portWORD_SIZE(sp)
-    load_x x15,15* portWORD_SIZE(sp)
-    load_x x16,16* portWORD_SIZE(sp)
-    load_x x17,17* portWORD_SIZE(sp)
-    load_x x18,18* portWORD_SIZE(sp)
-    load_x x19,19* portWORD_SIZE(sp)
-    load_x x20,20* portWORD_SIZE(sp)
-    load_x x21,21* portWORD_SIZE(sp)
-    load_x x22,22* portWORD_SIZE(sp)
-    load_x x23,23* portWORD_SIZE(sp)
-    load_x x24,24* portWORD_SIZE(sp)
-    load_x x25,25* portWORD_SIZE(sp)
-    load_x x26,26* portWORD_SIZE(sp)
-    load_x x27,27* portWORD_SIZE(sp)
-    load_x x28,28* portWORD_SIZE(sp)
-    load_x x29,29* portWORD_SIZE(sp)
-    load_x x30,30* portWORD_SIZE(sp)
-    load_x x31,31* portWORD_SIZE(sp)
-    addi sp,sp,+8*32
+    portcontext_SAVE_CONTEXT_INTR
+    call irq_stimer_handler
+    call prvTickISR
+    portcontext_RESTORE_CONTEXT
     sret
+
+

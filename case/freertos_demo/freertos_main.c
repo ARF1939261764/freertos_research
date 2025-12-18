@@ -28,9 +28,9 @@ void task_0_main( void * arg ){
 
 void task_1_main( void * arg ){
     int i=0;
-    printf("enter task_1_main...\n");
+    printf("demo,enter task_1_main...\n");
     while(1){
-        printf("task_1_main:%d\n",i++);
+        printf("demo,task_1_main:%d\n",i++);
         vTaskDelay(1);
     }
 }

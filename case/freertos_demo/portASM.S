@@ -85,6 +85,7 @@ definitions. */
 .global freertos_risc_v_exception_handler
 .global freertos_risc_v_interrupt_handler
 .global freertos_risc_v_mtimer_interrupt_handler
+.global freertos_risc_v_stimer_interrupt_handler
 
 .extern vTaskSwitchContext
 .extern xTaskIncrementTick
@@ -185,7 +186,7 @@ definitions. */
  * x13
  * x12
  * x11
- * pvParameters
+ * x10(pvParameters)
  * x9
  * x8
  * x7
@@ -316,6 +317,7 @@ freertos_risc_v_interrupt_handler:
 /*-----------------------------------------------------------*/
 
 .section .text.freertos_risc_v_mtimer_interrupt_handler
+freertos_risc_v_stimer_interrupt_handler:
 freertos_risc_v_mtimer_interrupt_handler:
     portcontextSAVE_INTERRUPT_CONTEXT
     portUPDATE_MTIMER_COMPARE_REGISTER

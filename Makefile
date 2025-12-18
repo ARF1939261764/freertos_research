@@ -71,7 +71,7 @@ all:$(BUILD_DIR) $(BUILD_DIR_CASE)/$(TARGET).elf
 	$(OBJCOPY) -O binary -S $(BUILD_DIR_CASE)/$(TARGET).elf $(BUILD_DIR_CASE)/$(TARGET).bin
 	$(OBJDUMP) -S -C -d $(BUILD_DIR_CASE)/$(TARGET).elf > $(BUILD_DIR_CASE)/$(TARGET).S
 	$(READELF) -h -s -S $(BUILD_DIR_CASE)/$(TARGET).elf > $(BUILD_DIR_CASE)/$(TARGET).symtab
-	make -C ./opensbi  PLATFORM=generic CROSS_COMPILE=riscv64-unknown-linux-gnu- FW_PAYLOAD_PATH=../build/freertos/main.bin  all
+	make -C ./opensbi  PLATFORM=generic CROSS_COMPILE=riscv64-unknown-linux-gnu- FW_PAYLOAD_PATH=../$(BUILD_DIR_CASE)/$(TARGET).bin  all
 
 
 $(BUILD_DIR_CASE)/$(TARGET).elf :$(SOBJS) $(COBJS)

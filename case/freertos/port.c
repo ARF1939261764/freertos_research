@@ -47,7 +47,7 @@ void vPortYield( void )
     /* Start executing the task we have just switched to. */
 }
 
-static void prvTickISR( void )
+void prvTickISR( void )
 {
     /* Interrupts must have been enabled for the ISR to fire, so we have to
      * save the context with interrupts enabled. */
