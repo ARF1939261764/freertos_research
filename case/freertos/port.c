@@ -15,6 +15,7 @@ BaseType_t xPortStartScheduler( void )
 
 void vPortEndScheduler( void )
 {
+    for(;;){}
 }
 
 StackType_t * pxPortInitialiseStack( StackType_t * pxTopOfStack,
